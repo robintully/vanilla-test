@@ -1,6 +1,6 @@
 base: ghcr.io/vanilla-os/desktop:main
-name: Custom Vanilla Desktop
-id: vanilla-custom
+name: Saturn Vanillas OS
+id: saturn
 labels:
   maintainer: self-maintained
 args:
@@ -15,11 +15,27 @@ modules:
 
 # Put your custom actions behind this comment
 
+- name: add-just
+  type: shell
+  commands:
+    - "wget -qO - 'https://proget.makedeb.org/debian-feeds/prebuilt-mpr.pub' | gpg --dearmor | sudo tee /usr/share/keyrings/prebuilt-mpr-archive-keyring.gpg 1> /dev/null"
+    - "echo "deb [arch=all,$(dpkg --print-architecture) signed-by=/usr/share/keyrings/prebuilt-mpr-archive-keyring.gpg] https://proget.makedeb.org prebuilt-mpr $(lsb_release -cs)" | sudo tee /etc/apt/sources.list.d/prebuilt-mpr.list"
+    - "apt update"
+
+- name: add-ubuntu-repos
+  type: shell
+  commands:
+    - "apt-add-repository ppa:fish-shell/release-3"
+    - "apt-get update && apt-get upgrade"
+
+
 - name: example-packages
   type: apt
   source:
     packages:
     - vim
+    - fish
+    - just
 
 - name: example-commands
   type: shell
